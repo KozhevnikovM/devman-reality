@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 
-from property.models import Flat
+from .models import Flat
 
 
 def format_price(value):
@@ -12,26 +12,30 @@ def format_price(value):
 
 
 def show_flats(request):
-    town = request.GET.get("town")
-    min_price = format_price(request.GET.get("min_price"))
-    max_price = format_price(request.GET.get("max_price"))
-    new_building = request.GET.get("new_building")
-    flats = Flat.objects.all()
+    possible_filters = {
+        'town': request.GET.get("town"),
+        'price__gt': format_price(request.GET.get("min_price")),
+        'price__lt': format_price(request.GET.get("max_price")),
+        'new_building': request.GET.get("new_building")
+    }
 
-    if town:
-        flats = flats.filter(town=town)
-    if min_price:
-        flats = flats.filter(price__gt=min_price)
-    if max_price:
-        flats = flats.filter(price__lt=max_price)
-    if new_building:
-        flats = flats.filter(new_building=True)
+    current_filter = {
+        param: choice for param, choice in possible_filters.items() if choice
+    }
 
-    towns = Flat.objects.values_list("town", flat=True).distinct().order_by("town")
-    return render(request, "flats_list.html", {
-        "flats": flats[:10],
-        "towns": towns,
-        "active_town": town,
-        "max_price": max_price,
-        "min_price": min_price,
-        "new_building": new_building})
+    flats = Flat.objects.filter(**current_filter)
+    towns = Flat.objects.values_list(
+        "town", flat=True).distinct().order_by("town")
+    
+    return render(
+        request,
+        "flats_list.html",
+        {
+            "flats": flats[:10],
+            "towns": towns,
+            "active_town": town,
+            "max_price": max_price,
+            "min_price": min_price,
+            "new_building": new_building
+        }
+    )
