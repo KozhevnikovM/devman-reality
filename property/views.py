@@ -7,17 +7,17 @@ from property.models import Flat
 def format_price(value):
     try:
         return int(value)
-    except (TypeError, ValueError) as err:
+    except (TypeError, ValueError):
         return None
 
 
 def show_flats(request):
-    town = request.GET.get('town')
-    min_price = format_price(request.GET.get('min_price'))
-    max_price = format_price(request.GET.get('max_price'))
-    new_building = request.GET.get('new_building')
-
+    town = request.GET.get("town")
+    min_price = format_price(request.GET.get("min_price"))
+    max_price = format_price(request.GET.get("max_price"))
+    new_building = request.GET.get("new_building")
     flats = Flat.objects.all()
+
     if town:
         flats = flats.filter(town=town)
     if min_price:
@@ -27,11 +27,11 @@ def show_flats(request):
     if new_building:
         flats = flats.filter(new_building=True)
 
-    towns = Flat.objects.values_list('town', flat=True).distinct().order_by('town')
-    return render(request, 'flats_list.html', {
-        'flats': flats[:10],
-        'towns': towns,
-        'active_town': town,
-        'max_price': max_price,
-        'min_price': min_price,
-        'new_building': new_building})
+    towns = Flat.objects.values_list("town", flat=True).distinct().order_by("town")
+    return render(request, "flats_list.html", {
+        "flats": flats[:10],
+        "towns": towns,
+        "active_town": town,
+        "max_price": max_price,
+        "min_price": min_price,
+        "new_building": new_building})
