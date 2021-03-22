@@ -16,11 +16,11 @@ def show_flats(request):
     max_price = format_price(request.GET.get("max_price"))
     min_price = format_price(request.GET.get("min_price"))
     new_building = request.GET.get("new_building")
-    
+
     possible_filters = {
         'town': town,
-        'price__gt': min_price,
-        'price__lt': max_price,
+        'price__gte': min_price,
+        'price__lte': max_price,
         'new_building': new_building
     }
 
