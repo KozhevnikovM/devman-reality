@@ -4,9 +4,9 @@ from django.contrib.auth.models import User
 from phonenumber_field.modelfields import PhoneNumberField
 
 class Flat(models.Model):
-    owner = models.CharField("ФИО владельца", max_length=200)
+    owner = models.CharField("ФИО владельца", max_length=200, db_index=True)
     owners_phonenumber = models.CharField("Номер владельца", max_length=20)
-    owner_pure_phone = PhoneNumberField(blank=True, null=True)
+    owner_pure_phone = PhoneNumberField(blank=True, null=True, db_index=True)
     new_building = models.NullBooleanField("Новостройка")
     created_at = models.DateTimeField(
         "Когда создано объявление",
@@ -60,3 +60,17 @@ class Сomplaint(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="complaints", null=True, verbose_name="Пользователь")
     flat = models.ForeignKey(Flat, on_delete=models.CASCADE, related_name="complaints", null=True, verbose_name="Квартира")
     text = models.TextField("Текст жалобы", blank=True)
+
+class Owner(models.Model):
+    name = models.CharField("ФИО владельца", max_length=200)
+    phonenumber = models.CharField("Номер владельца", max_length=20)
+    pure_phone = PhoneNumberField(blank=True, null=True)
+    flats = models.ManyToManyField(Flat, related_name='owners')
+
+    def __str__(self):
+        return self.name
+    
+
+#todo:
+# datamigrate
+# admin view
