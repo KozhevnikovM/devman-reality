@@ -6,7 +6,7 @@ from django.db import migrations
 def fill_new_building(apps,schema_editor):
     Flat = apps.get_model('property', 'Flat')
     for flat in Flat.objects.all():
-        flat.new_building = True if flat.construction_year >= 2015 else False
+        flat.new_building = flat.construction_year >= 2015
         flat.save()
 
 def move_backward(apps, schema_editor):
