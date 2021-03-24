@@ -56,7 +56,7 @@ class Flat(models.Model):
         blank=True,
         db_index=True)
 
-    liked = models.ManyToManyField(User, related_name="likes")
+    liked = models.ManyToManyField(User, related_name="likes", null=True, blank=True)
 
     def show_owner_phone(self):
         return f"{self.owners.last().pure_phone}"
